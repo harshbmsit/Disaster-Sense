@@ -1,9 +1,8 @@
 fastapi
 uvicorn
-sqlalchemy
-psycopg2-binary
 python-dotenv
-alembic
 requests
 httpx
 apscheduler
+pymongo
+dnspython
