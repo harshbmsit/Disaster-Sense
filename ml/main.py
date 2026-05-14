@@ -64,7 +64,7 @@ def run_once(flood_model, earthquake_model, cyclone_model):
             "earthquake_risk": earthquake_score,
             "cyclone_risk": cyclone_score
         }
-        response = requests.post("http://localhost:8000/api/v1/risk-scores", json=payload, timeout=5)
+        response = requests.post("http://172.45.1.111:8000/api/v1/risk-scores", json=payload, timeout=5)
         response.raise_for_status()
         
         level = get_alert_level(fused_score).split(" ")[1] # Extract text from emoji
