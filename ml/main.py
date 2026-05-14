@@ -1,5 +1,6 @@
 import sys
 import time
+import requests
 
 # Force UTF-8 for Windows console to handle emojis
 if sys.stdout.encoding != 'utf-8':
@@ -55,6 +56,21 @@ def run_once(flood_model, earthquake_model, cyclone_model):
     print(f"   {'─'*44}")
     print(f"   Fused Risk Score      : {fused_score:>6.2f}/100  {get_alert_level(fused_score)}")
     print(f"   (flood×{FLOOD_WEIGHT} + quake×{EARTHQUAKE_WEIGHT} + cyclone×{CYCLONE_WEIGHT})")
+
+    # POST risk scores to backend
+    try:
+        payload = {
+            "flood_risk": flood_score,
+            "earthquake_risk": earthquake_score,
+            "cyclone_risk": cyclone_score
+        }
+        response = requests.post("http://localhost:8000/api/v1/risk-scores", json=payload, timeout=5)
+        response.raise_for_status()
+        
+        level = get_alert_level(fused_score).split(" ")[1] # Extract text from emoji
+        print(f"✅ Risk scores sent to backend: fused={fused_score} level={level}")
+    except Exception:
+        print("⚠️ Could not send to backend — running standalone")
 
 def main():
     print("🚀 Loading ML models...")
