@@ -8,6 +8,14 @@ from app.models.sensor_data import sensor_readings
 from app.ingestion.weather_ingestion import fetch_weather_data
 from app.ingestion.earthquake_ingestion import fetch_earthquake_data
 from app.ingestion.nasa_ingestion import fetch_nasa_data
+from app.routes.risk_routes import router as risk_router
+from app.routes.grid_routes import router as grid_router
+from app.routes.alert_routes import router as alert_router
+from app.routes.shelter_routes import router as shelter_router
+from app.routes.rescue_routes import router as rescue_router
+from app.routes.report_routes import router as report_router
+from app.routes.websocket_routes import router as ws_router
+from fastapi.middleware.cors import CORSMiddleware
 
 def run_ingestion_sync():
     """Runs synchronous fetching and DB insert logic."""
@@ -80,6 +88,22 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 app = FastAPI(title="DisasterSense Backend", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(risk_router)
+app.include_router(grid_router)
+app.include_router(alert_router)
+app.include_router(shelter_router)
+app.include_router(rescue_router)
+app.include_router(report_router)
+app.include_router(ws_router)
 
 @app.get("/health")
 def health_check():
