@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DisasterSense</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4f8;
+      --white: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --green: #22c55e;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+    }
+
+    /* ── Phone Shell ── */
+    .phone {
+      width: 390px;
+      background: var(--bg);
+      border-radius: 44px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.22), 0 0 0 10px #1a1a2e;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Notch ── */
+    .notch {
+      background: #1a1a2e;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notch-pill {
+      width: 120px;
+      height: 14px;
+      background: #000;
+      border-radius: 20px;
+    }
+
+    /* ── Nav Bar ── */
+    .navbar {
+      background: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .navbar .back-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      font-size: 20px;
+      margin-right: 10px;
+      line-height: 1;
+    }
+    .navbar h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── Screen ── */
+    .screen {
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      gap: 0;
+      max-height: 700px;
+      overflow-y: auto;
+      padding-bottom: 40px;
+    }
+    .screen.active { display: flex; }
+
+    /* ── HOME SCREEN ── */
+    .home-title {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      margin: 16px 0 20px;
+    }
+
+    /* Status card */
+    .status-card {
+      background: var(--green);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(34,197,94,0.35);
+    }
+    .status-dot {
+      width: 12px; height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      animation: pulse 1.8s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+    .status-label { color: #fff; font-size: 17px; font-weight: 700; }
+
+    /* Alerts */
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .alert-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border-left: 5px solid;
+      box-shadow: var(--shadow);
+    }
+    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .alert-emoji { font-size: 16px; }
+    .alert-severity { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .alert-message { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+    /* Colors */
+    .advisory { border-left-color: #2563eb; }
+    .advisory .alert-severity { color: #2563eb; }
+    .warning { border-left-color: #f97316; }
+    .warning .alert-severity { color: #f97316; }
+    .monitor { border-left-color: #6b7280; }
+    .monitor .alert-severity { color: #6b7280; }
+    .critical { border-left-color: #dc2626; }
+    .critical .alert-severity { color: #dc2626; }
+
+    /* ── Button ── */
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 24px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.45); }
+    .btn:active { transform: translateY(0); }
+    .btn.success {
+      background: var(--green);
+      box-shadow: 0 6px 20px rgba(34,197,94,0.35);
+    }
+
+    /* ── REPORT SCREEN ── */
+    .report-title {
+      font-size: 24px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      margin: 16px 0 24px;
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 7px;
+      display: block;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      margin-bottom: 18px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    textarea.form-input { height: 90px; resize: none; }
+    select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1a2e;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Bottom bar ── */
+    .home-indicator {
+      height: 28px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .home-indicator-bar {
+      width: 120px;
+      height: 4px;
+      background: #1a1a2e;
+      border-radius: 4px;
+      opacity: 0.2;
+    }
+
+    /* Scrollbar */
+    .screen::-webkit-scrollbar { width: 0; }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Notch -->
+  <div class="notch"><div class="notch-pill"></div></div>
+
+  <!-- Nav Bar -->
+  <div class="navbar" id="navbar">
+    <button class="back-btn" id="backBtn" onclick="goHome()">‹</button>
+    <h1 id="navTitle">DisasterSense</h1>
+  </div>
+
+  <!-- ── HOME SCREEN ── -->
+  <div class="screen active" id="homeScreen">
+    <div class="home-title">DisasterSense</div>
+
+    <!-- Status Card -->
+    <div class="status-card">
+      <div class="status-dot"></div>
+      <span class="status-label">System Online</span>
+    </div>
+
+    <!-- Alerts -->
+    <div class="section-title">Recent Alerts:</div>
+
+    <div class="alert-card advisory">
+      <div class="alert-header">
+        <span class="alert-emoji">🔵</span>
+        <span class="alert-severity">Advisory</span>
+      </div>
+      <div class="alert-message">Cyclone watch in effect for coastal regions.</div>
+    </div>
+
+    <div class="alert-card warning">
+      <div class="alert-header">
+        <span class="alert-emoji">🟠</span>
+        <span class="alert-severity">Warning</span>
+      </div>
+      <div class="alert-message">Flood risk high near river basins.</div>
+    </div>
+
+    <div class="alert-card monitor">
+      <div class="alert-header">
+        <span class="alert-emoji">⚫</span>
+        <span class="alert-severity">Monitor</span>
+      </div>
+      <div class="alert-message">Seismic activity detected — monitoring ongoing.</div>
+    </div>
+
+    <!-- CTA Button -->
+    <button class="btn" onclick="goReport()">Submit a Report</button>
+  </div>
+
+  <!-- ── REPORT SCREEN ── -->
+  <div class="screen" id="reportScreen">
+    <div class="report-title">Report a Disaster</div>
+
+    <label class="form-label">Your Name:</label>
+    <input class="form-input" id="inputName" type="text" placeholder="Enter your name" />
+
+    <label class="form-label">Location:</label>
+    <input class="form-input" id="inputLocation" type="text" placeholder="Enter location" />
+
+    <label class="form-label">Description:</label>
+    <textarea class="form-input" id="inputDescription" placeholder="Describe the situation"></textarea>
+
+    <label class="form-label">Hazard Type:</label>
+    <select class="form-input" id="inputHazard">
+      <option value="Flood">🌊 Flood</option>
+      <option value="Earthquake">🌍 Earthquake</option>
+      <option value="Cyclone">🌀 Cyclone</option>
+    </select>
+
+    <button class="btn" id="submitBtn" onclick="submitReport()">Submit Report</button>
+  </div>
+
+  <!-- Home indicator -->
+  <div class="home-indicator"><div class="home-indicator-bar"></div></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ Report Submitted!</div>
+
+<script>
+  function goReport() {
+    document.getElementById('homeScreen').classList.remove('active');
+    document.getElementById('reportScreen').classList.add('active');
+    document.getElementById('navTitle').textContent = 'Report a Disaster';
+    document.getElementById('backBtn').style.display = 'block';
+  }
+
+  function goHome() {
+    document.getElementById('reportScreen').classList.remove('active');
+    document.getElementById('homeScreen').classList.add('active');
+    document.getElementById('navTitle').textContent = 'DisasterSense';
+    document.getElementById('backBtn').style.display = 'none';
+  }
+
+  function submitReport() {
+    const name = document.getElementById('inputName').value.trim();
+    const location = document.getElementById('inputLocation').value.trim();
+    const hazard = document.getElementById('inputHazard').value;
+
+    if (!name || !location) {
+      showToast('⚠️ Please fill in Name and Location');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      showToast(`✅ Report Submitted! (${hazard})`);
+      btn.textContent = 'Submit Report';
+      btn.disabled = false;
+      document.getElementById('inputName').value = '';
+      document.getElementById('inputLocation').value = '';
+      document.getElementById('inputDescription').value = '';
+      document.getElementById('inputHazard').value = 'Flood';
+      setTimeout(goHome, 1800);
+    }, 800);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
