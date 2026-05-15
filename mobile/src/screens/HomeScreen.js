@@ -10,7 +10,7 @@ import {
   AppState,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 import { fetchAlerts, fetchRiskScore, checkHealth } from '../hooks/useApi';
 import { WS_URL } from '../config';
 import { sendTelegramAlert } from '../utils/telegram';
@@ -230,23 +230,14 @@ export default function HomeScreen({ navigation }) {
 
   // ── Send mock notification ──
   const sendTestNotification = async () => {
-    if (Platform.OS === 'web') {
-      alert('⚠️ Notifications are not supported on web. Test on Expo Go.');
-      return;
-    }
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: '⚠️ Warning: Flood Risk High',
-          body: `Koramangala area flood risk is now at ${riskScore}/100. Evacuate immediately.`,
-          badge: alerts.length,
-          data: { screen: 'Home' },
-        },
-        trigger: { seconds: 2 },
-      });
-    } catch (err) {
-      alert('Could not send notification.');
-    }
+    await sendTelegramAlert(
+      `🔔 <b>DisasterSense Test Alert</b>\n` +
+      `Risk Score: ${riskScore}/100\n` +
+      `Level: ${alertLevel}\n` +
+      `Location: Bengaluru\n` +
+      `Time: ${new Date().toLocaleString('en-IN')}`
+    );
+    alert('✅ Alert sent! Check your Telegram group.');
   };
 
   if (loading) return <LoadingScreen message="Connecting to DisasterSense..." />;
