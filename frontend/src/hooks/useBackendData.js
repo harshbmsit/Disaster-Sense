@@ -14,6 +14,9 @@ export function useBackendData() {
   });
   const [alerts, setAlerts] = useState([]);
   const [riskGrid, setRiskGrid] = useState([]);
+  const [sensorData, setSensorData] = useState(null);
+  const [shelters, setShelters] = useState([]);
+  const [rescueTeams, setRescueTeams] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const wsRef = useRef(null);
@@ -108,5 +111,55 @@ export function useBackendData() {
     return () => clearInterval(interval);
   }, []);
 
-  return { riskScores, alerts, riskGrid, isConnected, lastUpdated };
+  // Fetch sensor data from GET /api/v1/sensor-data
+  useEffect(() => {
+    async function fetchSensorData() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/sensor-data`);
+        const data = await res.json();
+        if (data) setSensorData(data);
+      } catch (e) {
+        console.error('Failed to fetch sensor data:', e);
+      }
+    }
+    fetchSensorData();
+    const interval = setInterval(fetchSensorData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch shelters from GET /api/v1/shelters
+  useEffect(() => {
+    async function fetchShelters() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/shelters`);
+        const data = await res.json();
+        const shelterArray = data.shelters || data;
+        if (shelterArray && shelterArray.length > 0) setShelters(shelterArray);
+      } catch (e) {
+        console.error('Failed to fetch shelters:', e);
+      }
+    }
+    fetchShelters();
+    const interval = setInterval(fetchShelters, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch rescue teams from GET /api/v1/rescue-teams
+  useEffect(() => {
+    async function fetchRescueTeams() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/rescue-teams`);
+        const data = await res.json();
+        const teamsArray = data.teams || data;
+        if (teamsArray && teamsArray.length > 0) setRescueTeams(teamsArray);
+      } catch (e) {
+        console.error('Failed to fetch rescue teams:', e);
+      }
+    }
+    fetchRescueTeams();
+    const interval = setInterval(fetchRescueTeams, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return { riskScores, alerts, riskGrid, sensorData, shelters, rescueTeams, isConnected, lastUpdated };
 }

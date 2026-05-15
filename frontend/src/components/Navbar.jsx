@@ -7,8 +7,6 @@ const tabs = [
   { id: 'quake', label: 'Earthquake', icon: '⚠️' },
   { id: 'cyclone', label: 'Cyclone Tracker', icon: '🌀' },
   { id: 'alerts', label: 'Alert System', icon: '🚨' },
-  { id: 'routes', label: 'Evacuation Routes', icon: '🛣️' },
-  { id: 'rescue', label: 'Rescue Dispatch', icon: '🚁' }
 ];
 
 export default function Navbar({ activeTab, setActiveTab, isConnected, lastUpdated }) {
@@ -28,7 +26,7 @@ export default function Navbar({ activeTab, setActiveTab, isConnected, lastUpdat
             <button
               key={tab.id}
               onClick={() => setActiveTab && setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 whitespace-nowrap ${
+              className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 whitespace-nowrap ${
                 isActive 
                   ? 'bg-[#1E293B] text-white shadow-lg border border-white/10' 
                   : 'text-white/40 hover:text-white/80 hover:bg-white/[0.03] border border-transparent'
@@ -36,6 +34,13 @@ export default function Navbar({ activeTab, setActiveTab, isConnected, lastUpdat
             >
               <span className="opacity-80">{tab.icon}</span>
               {tab.label}
+              {isActive && (
+                <motion.div
+                  layoutId="navbar-underline"
+                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </button>
           );
         })}
